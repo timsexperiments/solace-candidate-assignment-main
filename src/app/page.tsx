@@ -1,24 +1,36 @@
 "use client";
 
+import type { PageInfo } from "@/app/api/advocates/route";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Advocate } from "@/db/schema";
 import { useAdvocateSearch } from "@/lib/use_advocate_search";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Home() {
-  const { advocates, error, loading, search, searchTerm } = useAdvocateSearch();
+  const {
+    advocates,
+    error,
+    loading,
+    pageInfo,
+    search,
+    searchTerm,
+    setPageNumber,
+    setPageSize,
+  } = useAdvocateSearch();
 
   const onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
     search(value);
+    setPageNumber(1);
   };
 
   const onClick = () => {
     search("");
+    setPageNumber(1);
   };
 
   return (
-    <main className="container mx-auto grid h-screen grid-rows-[auto_auto_1fr] p-6">
+    <main className="container mx-auto grid h-screen grid-rows-[auto_auto_1fr_auto] p-6">
       <h1 className="mb-16 font-sans text-3xl font-extralight tracking-widest">
         Solace Advocates
       </h1>
@@ -52,6 +64,14 @@ export default function Home() {
           isLoading={loading}
           error={error}
           search={search}
+        />
+      </div>
+      <div>
+        <Paginator
+          pageInfo={pageInfo}
+          pageSizeOptions={[10, 20, 50, 100]}
+          onPageSizeChange={setPageSize}
+          onPageChange={setPageNumber}
         />
       </div>
     </main>
@@ -160,5 +180,104 @@ function AdvocatesTable({
         <TableRows />
       </tbody>
     </table>
+  );
+}
+
+interface PaginatorProps<TPageSizeOptions extends number[]> {
+  pageInfo: PageInfo;
+  pageSizeOptions: TPageSizeOptions;
+  defaultPageSize?: TPageSizeOptions[number];
+  onPageSizeChange?: (pageSize: TPageSizeOptions[number]) => void;
+  onPageChange?: (pageNumber: number) => void;
+}
+
+function Paginator<TPageSizeOptions extends number[]>({
+  pageInfo: { nextPage, totalItems, totalPages },
+  defaultPageSize,
+  pageSizeOptions,
+  onPageChange,
+  onPageSizeChange,
+}: PaginatorProps<TPageSizeOptions>) {
+  const pageNumber = nextPage ? nextPage - 1 : 1;
+  const [pageSize, setPageSize] = useState(
+    defaultPageSize || pageSizeOptions[0],
+  );
+
+  useEffect(() => {
+    if (onPageSizeChange) {
+      onPageSizeChange(pageSize);
+    }
+  }, [pageSize, onPageSizeChange]);
+
+  const pageNumbersToShow = [
+    pageNumber - 2,
+    pageNumber - 1,
+    pageNumber,
+    pageNumber + 1,
+    pageNumber + 2,
+  ].filter((num) => num > 0 && num <= totalPages);
+  return (
+    <div className="flex items-center justify-between p-4">
+      <div>
+        Page {pageNumber} of {totalPages}
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-1">
+          <button
+            className="mr-2 rounded bg-gray-200 px-4 py-2"
+            onClick={() => {
+              console.log("Previous page clicked", pageNumber - 1);
+              if (pageNumber > 1) {
+                onPageChange && onPageChange(pageNumber - 1);
+              }
+            }}
+            disabled={pageNumber <= 1}>
+            {"<"}
+          </button>
+          {pageNumbersToShow.map((num) => (
+            <button
+              key={num}
+              className={`rounded px-4 py-2 ${
+                num === pageNumber ? "bg-green-700 text-white" : "bg-gray-200"
+              }`}
+              onClick={() => {
+                console.log("Page number clicked:", num);
+                onPageChange && onPageChange(num);
+              }}>
+              {num}
+            </button>
+          ))}
+          <button
+            className="ml-2 rounded bg-gray-200 px-4 py-2"
+            onClick={() => {
+              console.log("Next page clicked", pageNumber + 1);
+              if (pageNumber < totalPages) {
+                onPageChange && onPageChange(pageNumber + 1);
+              }
+            }}
+            disabled={pageNumber >= totalPages}>
+            {">"}
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <select
+            id="page-size"
+            value={pageSize}
+            onChange={(e) => {
+              if (parseInt(e.target.value)) setPageSize(+e.target.value);
+            }}
+            className="rounded border border-slate-300 px-2 py-1">
+            {pageSizeOptions.map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+          <label htmlFor="page-size" className="font-normal">
+            {totalItems ? <>of {totalItems} items</> : <>per page</>}
+          </label>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -116,6 +116,32 @@ While making these changes, I noticed that the APIs must have changed, since the
 
 As part of this change we also enhanced the seed to add over 1 million records to the DB in order to test the FT search capabilities.
 
+# 7. Pagination
+
+**Goal**: Allow users of the search to see more than the first 100 results.
+
+There are a couple of different pagination schemes that we can go with:
+
+1. a forward and back without page numbers or last page. This is commonly what Google uses in their searches
+
+- pros:
+  - keeps context of what the results were at the time the search was initiated ensuring that the results on future and previous pages always have the same results
+- cons:
+  - doesn't allow flexibility for skipping pages and stuff as easily (I'm sure we could build this, but more effort)
+
+2. a simple pagination that just takes a page size and offset (page number)
+
+- pros:
+  - simple to implement we can do this in a few minutes
+- cons:
+  - pages are not guaranteed to be the same
+
+I will go with opt. 2 for now because of the simplicity and time it takes to implement. This is often a common experience, so users will be used to this, even though it's not always the _best_ user experience. This solution is also fine when the data is not constantly updating. While I imagine a system like this would be adding in advocates every now and then, it would be uncommon that many advocates are getting added while users are actively searching. i.e. this is likely very read heavy data not write heavy.
+
+- add simple pagination
+- add page navigation to the table component
+- update api to do pagination stuff
+
 ## Notes
 
 - in the hook we try to setError with user friendly errors as these would likely be what we would alert the user with / display
@@ -151,3 +177,7 @@ As part of this change we also enhanced the seed to add over 1 million records t
 - Postgres full text search to_tsvector https://www.postgresql.org/docs/current/textsearch.html
 - Postgres full text search websearch query https://www.postgresql.org/docs/17/textsearch-controls.html
 - Drizzle generated columns https://orm.drizzle.team/docs/guides/full-text-search-with-generated-columns
+
+## Commit 7
+
+- Postgres patition count https://stackoverflow.com/questions/28888375/run-a-query-with-a-limit-offset-and-also-get-the-total-number-of-rows
