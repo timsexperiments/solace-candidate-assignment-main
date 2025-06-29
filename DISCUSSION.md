@@ -103,6 +103,19 @@ The button and input are examples of a design system. I'd probably work on conve
 
 I know there are some libraries that are used for combining tailwind classes in JavaScript. I would probably use one of those libraries within my design system.
 
+# 6. Full Text indexing
+
+**Goal**: Make searching more efficient, closer to what I would want with a production app
+
+- Add a ft index to the table
+  - we want our index to filter like a search where each word in the search is separate (also we want to use a prefix search).
+  - we will join each search term with an &
+- use index in the BE filter
+
+While making these changes, I noticed that the APIs must have changed, since the documentation didn't match. I updated the drizzle dependencies so that the docs would be more relevant instead of looking through the apis to figure out how it works.
+
+As part of this change we also enhanced the seed to add over 1 million records to the DB in order to test the FT search capabilities.
+
 ## Notes
 
 - in the hook we try to setError with user friendly errors as these would likely be what we would alert the user with / display
@@ -131,3 +144,10 @@ I know there are some libraries that are used for combining tailwind classes in 
 ## Commit 2
 
 - Priorities and requirements https://findsolace.notion.site/Solace-Engineering-Assignment-bbf3ebf1fa274d0e92d9cde773a0a671
+
+## Commit 6
+
+- Drizzle full text index https://orm.drizzle.team/docs/guides/postgresql-full-text-search
+- Postgres full text search to_tsvector https://www.postgresql.org/docs/current/textsearch.html
+- Postgres full text search websearch query https://www.postgresql.org/docs/17/textsearch-controls.html
+- Drizzle generated columns https://orm.drizzle.team/docs/guides/full-text-search-with-generated-columns

@@ -26,14 +26,25 @@ export default function Home() {
         <label htmlFor="search" className="cursor-pointer">
           <h2 className="text-xl font-bold">Search</h2>
         </label>
-        <div className="flex items-center gap-2">
-          <Input id="search" value={searchTerm} onChange={onChange} />
-          <Button onClick={onClick}>Reset Search</Button>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Input id="search" value={searchTerm} onChange={onChange} />
+            <Button onClick={onClick}>Reset Search</Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="font-medium">Sort by: </span>
+            <Button className="ml-auto opacity-60" disabled>
+              {/** TODO: do custom ordering */}
+              Best Match
+            </Button>
+          </div>
         </div>
-        <div className="mt-6 font-medium">
-          <span className="font-semibold">Searching for:</span>{" "}
-          <span id="search-term">{searchTerm}</span>
-        </div>
+        {searchTerm && (
+          <div className="mt-6 font-medium">
+            <span className="font-semibold">Searching for:</span>{" "}
+            <span id="search-term">{searchTerm}</span>
+          </div>
+        )}
       </div>
       <div className="mt-6 w-full overflow-auto">
         <AdvocatesTable
