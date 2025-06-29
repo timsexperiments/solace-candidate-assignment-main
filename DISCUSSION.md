@@ -140,6 +140,7 @@ I will go with opt. 2 for now because of the simplicity and time it takes to imp
 
 - add simple pagination
 - add page navigation to the table component
+- update api to do pagination stuff
 
 ## Notes
 
@@ -176,3 +177,7 @@ I will go with opt. 2 for now because of the simplicity and time it takes to imp
 - Postgres full text search to_tsvector https://www.postgresql.org/docs/current/textsearch.html
 - Postgres full text search websearch query https://www.postgresql.org/docs/17/textsearch-controls.html
 - Drizzle generated columns https://orm.drizzle.team/docs/guides/full-text-search-with-generated-columns
+
+## Commit 7
+
+- Postgres patition count https://stackoverflow.com/questions/28888375/run-a-query-with-a-limit-offset-and-also-get-the-total-number-of-rows

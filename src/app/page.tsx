@@ -1,5 +1,6 @@
 "use client";
 
+import type { PageInfo } from "@/app/api/advocates/route";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Advocate } from "@/db/schema";
@@ -7,14 +8,25 @@ import { useAdvocateSearch } from "@/lib/use_advocate_search";
 import { ChangeEvent, useEffect, useState } from "react";
 
 export default function Home() {
-  const { advocates, error, loading, search, searchTerm } = useAdvocateSearch();
+  const {
+    advocates,
+    error,
+    loading,
+    pageInfo,
+    search,
+    searchTerm,
+    setPageNumber,
+    setPageSize,
+  } = useAdvocateSearch();
 
   const onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
     search(value);
+    setPageNumber(1);
   };
 
   const onClick = () => {
     search("");
+    setPageNumber(1);
   };
 
   return (
@@ -56,9 +68,10 @@ export default function Home() {
       </div>
       <div>
         <Paginator
-          pageNumber={0}
-          totalPages={0}
+          pageInfo={pageInfo}
           pageSizeOptions={[10, 20, 50, 100]}
+          onPageSizeChange={setPageSize}
+          onPageChange={setPageNumber}
         />
       </div>
     </main>
@@ -171,9 +184,7 @@ function AdvocatesTable({
 }
 
 interface PaginatorProps<TPageSizeOptions extends number[]> {
-  pageNumber: number;
-  totalPages: number;
-  totalItems?: number;
+  pageInfo: PageInfo;
   pageSizeOptions: TPageSizeOptions;
   defaultPageSize?: TPageSizeOptions[number];
   onPageSizeChange?: (pageSize: TPageSizeOptions[number]) => void;
@@ -181,14 +192,13 @@ interface PaginatorProps<TPageSizeOptions extends number[]> {
 }
 
 function Paginator<TPageSizeOptions extends number[]>({
-  pageNumber,
-  totalPages,
-  totalItems,
+  pageInfo: { nextPage, totalItems, totalPages },
   defaultPageSize,
   pageSizeOptions,
   onPageChange,
   onPageSizeChange,
 }: PaginatorProps<TPageSizeOptions>) {
+  const pageNumber = nextPage ? nextPage - 1 : 1;
   const [pageSize, setPageSize] = useState(
     defaultPageSize || pageSizeOptions[0],
   );

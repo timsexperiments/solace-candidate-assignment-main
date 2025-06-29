@@ -1,19 +1,35 @@
+import type { ApiResponse, PageInfo } from "@/app/api/advocates/route";
 import { Advocate } from "@/db/schema";
 import { useCallback, useEffect, useState } from "react";
 
 interface UseAdvocateSearchInputs {
   initialSearchTerm?: string;
   debounceTimeMs?: number;
+  initialPageSize?: number;
+  initialPageNumber?: number;
 }
 
 export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
-  const { initialSearchTerm = "", debounceTimeMs = 300 } = inputs ?? {};
+  const {
+    initialSearchTerm = "",
+    debounceTimeMs = 300,
+    initialPageNumber = 1,
+    initialPageSize = 10,
+  } = inputs ?? {};
 
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
   const [query, setQuery] = useState(searchTerm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [pageInfo, setPageInfo] = useState<PageInfo>({
+    nextPage: undefined,
+    totalItems: undefined,
+    pageSize: initialPageSize,
+    totalPages: 0,
+  });
+  const [pageSize, setPageSize] = useState(initialPageSize);
+  const [pageNumber, setPageNumber] = useState(initialPageNumber);
 
   useEffect(
     function () {
@@ -34,7 +50,7 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
     async function () {
       setLoading(true);
       const { response, error: err } = await fetch(
-        `/api/advocates?search=${encodeURIComponent(query)}`,
+        `/api/advocates?search=${encodeURIComponent(query)}&size=${pageSize}&page=${pageNumber}`,
       )
         .then((res) => ({ response: res, error: undefined }) as const)
         .catch(
@@ -61,7 +77,10 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
         .json()
         .then(
           (json) =>
-            ({ json: json as { data: Advocate[] }, error: undefined }) as const,
+            ({
+              json: json as ApiResponse<Advocate[]>,
+              error: undefined,
+            }) as const,
         )
         .catch(
           (error) => ({ error: error as Error, json: undefined }) as const,
@@ -75,10 +94,11 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
 
       // TODO: validate the response data
       setAdvocates(json.data ?? []);
+      setPageInfo(json.pageInfo);
       setLoading(false);
       setError(null);
     },
-    [query],
+    [query, pageSize, pageNumber],
   );
 
   useEffect(
@@ -93,6 +113,9 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
     loading,
     error,
     searchTerm,
+    pageInfo,
     search: setSearchTerm,
+    setPageSize,
+    setPageNumber,
   };
 }
