@@ -40,6 +40,7 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
         .catch(
           (error) => ({ error: error as Error, response: undefined }) as const,
         );
+
       if (err) {
         setError(
           new Error(

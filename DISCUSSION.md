@@ -85,6 +85,24 @@ I'm not that familiar with react as my experience leans mostly BE, but I can see
 - Move away from the query selector
 - Make the api around searching advocates take advantage of custom hook `useAdvocateSearch` in order to make the behavior around the data fetching more reusable. It is possible that we would want to have a similar admin search page
 
+# 5. Improve experience
+
+**Goal**: Make the experience as usable as possible (timebox ~ 15 min, about ~1hr remaining)
+
+Ideas:
+
+- Mini design system
+- Improve spacing
+- Add error notifications for when the experience might have not worked as the user would expect
+- fix buttons
+- visual hierarchy
+
+Had some extra time so added a feature to click on a specialty to search it specifically which I think just improves the experience.
+
+The button and input are examples of a design system. I'd probably work on converting a general table that I could use in the design system as well, but didn't want to waste time on it for this project.
+
+I know there are some libraries that are used for combining tailwind classes in JavaScript. I would probably use one of those libraries within my design system.
+
 ## Notes
 
 - in the hook we try to setError with user friendly errors as these would likely be what we would alert the user with / display
@@ -101,6 +119,7 @@ I'm not that familiar with react as my experience leans mostly BE, but I can see
 - Make the seed route not deploy on non-local builds
 - Add CI to build the project
 - Add an error reporting / tracking and logging service to the BE and the FE
+- use a design system for table and other common components
 
 # Resources
 
