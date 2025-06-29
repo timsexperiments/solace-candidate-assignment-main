@@ -131,3 +131,10 @@ I know there are some libraries that are used for combining tailwind classes in 
 ## Commit 2
 
 - Priorities and requirements https://findsolace.notion.site/Solace-Engineering-Assignment-bbf3ebf1fa274d0e92d9cde773a0a671
+
+## Commit 6
+
+- Drizzle full text index https://orm.drizzle.team/docs/guides/postgresql-full-text-search
+- Postgres full text search to_tsvector https://www.postgresql.org/docs/current/textsearch.html
+- Postgres full text search websearch query https://www.postgresql.org/docs/17/textsearch-controls.html
+- Drizzle generated columns https://orm.drizzle.team/docs/guides/full-text-search-with-generated-columns
