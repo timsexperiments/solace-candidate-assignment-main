@@ -66,6 +66,19 @@ Now that we have things working as expected. We'll make a list of somethings tha
 
 I think that is all that we'll have time for, so let's go with those goals for now
 
+# 3. DB filtering
+
+**Goal**: Make filtering do the same thing it currently does but from the BE (preferably via SQL)
+
+- Moving the filtering to the backend.
+  - Need to add a search parameter to the BE to be able to pass the input value
+- Struggled to get the yoe to convert to a string in postgres for some reason, so I timeboxed this to 5 minutes and decided to just make it an exact comparison since this is not likely how we will be filtering at the end of the project.
+- in order to get the filtering working on each type, the easiest thing was to just introduce some state to track the input text, and run the existing effect on changes to the input text.
+
+**Observations:**
+
+- Drizzle was actually really annoting to work with for the raw sql stuff due to the way it was sanitizing stuff. Eventually I figured it out. It is awesome that the sql function sanitizes the input. I had to play around with it for a while to understand how it works
+
 # Things I'd change with more time
 
 - Typically even for dev environment variables, I prefer to have a more secure place where engineers can pull the environment variables from for local dev. This could either put the variables directly in the environment or in a secure place where it can be copied and pasted from
