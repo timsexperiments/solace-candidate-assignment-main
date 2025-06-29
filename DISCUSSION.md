@@ -52,6 +52,20 @@ First we'll make the app work as it is expected to wrok:
 
 Next we can look into fixing other things (db indexing, filtering from the backend, make ui more reacty, etc...)
 
+# 2. Planning
+
+Now that we have things working as expected. We'll make a list of somethings that we want to see changed. Each feature listed should be able to have it's own standalone PR that we can merge in. These will be in prioritized order. These are in prioritized order based on the initial assingment (which can act as our requirements doc) and how I feel like I want to fix things as a secondary input.
+
+- Fix filtering to not be on FE (can still be in memory for now if needed)
+- Make the search experience feel more react like. (Prioritized due to mention in assignment doc)
+- Minor improvements to make the experience more useable. (Prioritized due to mention in assignment doc)
+- Move filtering through DB through maybe a FT search index or something (100,000 + advocates)
+- Paginating (100,000 + advocates)
+- Sorting on the search page (can be chosen only for certain columns if needed)
+- Additional filters on the search page
+
+I think that is all that we'll have time for, so let's go with those goals for now
+
 # Things I'd change with more time
 
 - Typically even for dev environment variables, I prefer to have a more secure place where engineers can pull the environment variables from for local dev. This could either put the variables directly in the environment or in a secure place where it can be copied and pasted from
