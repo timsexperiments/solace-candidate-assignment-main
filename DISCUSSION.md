@@ -75,6 +75,21 @@ I think that is all that we'll have time for, so let's go with those goals for n
 - Struggled to get the yoe to convert to a string in postgres for some reason, so I timeboxed this to 5 minutes and decided to just make it an exact comparison since this is not likely how we will be filtering at the end of the project.
 - in order to get the filtering working on each type, the easiest thing was to just introduce some state to track the input text, and run the existing effect on changes to the input text.
 
+# 4. Reactify
+
+**Goal**: use react apis to create a better experience and take advantage of react rendering patterns
+
+I'm not that familiar with react as my experience leans mostly BE, but I can see a few improvments that could be made (some already previously made):
+
+- Hold input in state (done in part 3)
+- Move away from the query selector
+- Make the api around searching advocates take advantage of custom hook `useAdvocateSearch` in order to make the behavior around the data fetching more reusable. It is possible that we would want to have a similar admin search page
+
+## Notes
+
+- in the hook we try to setError with user friendly errors as these would likely be what we would alert the user with / display
+- any console.log or console.error should represent sending to a logging service
+
 **Observations:**
 
 - Drizzle was actually really annoting to work with for the raw sql stuff due to the way it was sanitizing stuff. Eventually I figured it out. It is awesome that the sql function sanitizes the input. I had to play around with it for a while to understand how it works
@@ -85,6 +100,7 @@ I think that is all that we'll have time for, so let's go with those goals for n
   - I'd also use the env file for the docker-compose file as well rather than hardcoding the data. This would help it to be able to be adjusted to other environments as well without needing separate configs assuming that we are managing our own infrastructure.
 - Make the seed route not deploy on non-local builds
 - Add CI to build the project
+- Add an error reporting / tracking and logging service to the BE and the FE
 
 # Resources
 

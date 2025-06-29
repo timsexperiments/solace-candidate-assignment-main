@@ -1,40 +1,17 @@
 "use client";
 
-import { Advocate } from "@/db/schema";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useAdvocateSearch } from "@/lib/use_advocate_search";
+import { ChangeEvent } from "react";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState<Advocate[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { advocates, error, loading, search, searchTerm } = useAdvocateSearch();
 
-  useEffect(() => {
-    fetch(`/api/advocates?search=${encodeURIComponent(searchTerm)}`)
-      .then(async (response) => {
-        if (response.status !== 200) {
-          throw new Error(
-            `Failed to fetch advocates: ${response.status} ${response.statusText}`,
-            { cause: await response.text() },
-          );
-        }
-        response.json().then((jsonResponse) => {
-          setAdvocates(jsonResponse.data);
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching advocates:", error);
-      });
-  }, [searchTerm]);
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const searchTerm = e.target.value;
-
-    document.getElementById("search-term")!.innerHTML = searchTerm;
-
-    setSearchTerm(searchTerm);
+  const onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+    search(value);
   };
 
   const onClick = () => {
-    setSearchTerm("");
+    search("");
   };
 
   return (
@@ -45,7 +22,7 @@ export default function Home() {
       <div>
         <p>Search</p>
         <p>
-          Searching for: <span id="search-term"></span>
+          Searching for: <span id="search-term">{searchTerm}</span>
         </p>
         <input
           className="border border-solid border-black"
@@ -58,6 +35,13 @@ export default function Home() {
       <br />
       <table>
         <thead>
+          {error && (
+            <tr>
+              <th colSpan={7}>
+                {error.message || <>An unknown error occurred</>}
+              </th>
+            </tr>
+          )}
           <tr>
             <th>First Name</th>
             <th>Last Name</th>
@@ -69,23 +53,29 @@ export default function Home() {
           </tr>
         </thead>
         <tbody>
-          {advocates.map((advocate) => {
-            return (
-              <tr key={advocate.id}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div key={s}>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
+          {loading ? (
+            <tr>
+              <td colSpan={7}>Loading...</td>
+            </tr>
+          ) : (
+            advocates.map((advocate) => {
+              return (
+                <tr key={advocate.id}>
+                  <td>{advocate.firstName}</td>
+                  <td>{advocate.lastName}</td>
+                  <td>{advocate.city}</td>
+                  <td>{advocate.degree}</td>
+                  <td>
+                    {advocate.specialties.map((s) => (
+                      <div key={s}>{s}</div>
+                    ))}
+                  </td>
+                  <td>{advocate.yearsOfExperience}</td>
+                  <td>{advocate.phoneNumber}</td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
     </main>
