@@ -79,3 +79,7 @@ I think that is all that we'll have time for, so let's go with those goals for n
 
 - Node --env-file stuff: https://nodejs.org/en/learn/command-line/how-to-read-environment-variables-from-nodejs
 - Add type to drizzle JSONB column https://orm.drizzle.team/docs/column-types/pg
+
+## Commit 2
+
+- Priorities and requirements https://findsolace.notion.site/Solace-Engineering-Assignment-bbf3ebf1fa274d0e92d9cde773a0a671
