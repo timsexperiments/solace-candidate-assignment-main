@@ -4,6 +4,7 @@ import type { PageInfo } from "@/app/api/advocates/route";
 import { Button } from "@/components/button";
 import { Input } from "@/components/input";
 import { Advocate } from "@/db/schema";
+import { formatPhoneNumber } from "@/lib/phone/utils";
 import { useAdvocateSearch } from "@/lib/use_advocate_search";
 import { ChangeEvent, useEffect, useState } from "react";
 
@@ -17,6 +18,8 @@ export default function Home() {
     searchTerm,
     setPageNumber,
     setPageSize,
+    setYearsOfExperience,
+    yearsOfExperince,
   } = useAdvocateSearch();
 
   const onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +31,16 @@ export default function Home() {
     search("");
     setPageNumber(1);
   };
+
+  function setYearsOfExperienceFilter({
+    target: { value },
+  }: ChangeEvent<HTMLInputElement>) {
+    if (value !== "" && isNaN(parseInt(value))) {
+      return;
+    }
+
+    setYearsOfExperience(+value);
+  }
 
   return (
     <main className="container mx-auto grid h-screen grid-rows-[auto_auto_1fr_auto] p-6">
@@ -49,6 +62,15 @@ export default function Home() {
               {/** TODO: do custom ordering */}
               Best Match
             </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <span>Min YOE:</span>
+            <Input
+              type="number"
+              onChange={setYearsOfExperienceFilter}
+              step={1}
+              value={yearsOfExperince}
+            />
           </div>
         </div>
         {searchTerm && (
@@ -134,7 +156,7 @@ function AdvocatesTable({
             <a
               className="text-green-600 hover:text-green-700"
               href={`tel:${advocate.phoneNumber}`}>
-              {advocate.phoneNumber}
+              {formatPhoneNumber(advocate.phoneNumber.toString())}
             </a>
           </td>
         </tr>

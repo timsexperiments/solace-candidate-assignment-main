@@ -1,4 +1,4 @@
-import { desc, sql } from "drizzle-orm";
+import { and, desc, gte, sql } from "drizzle-orm";
 import { NextRequest } from "next/server";
 import db from "../../../db";
 import { Advocate, advocates } from "../../../db/schema";
@@ -27,8 +27,12 @@ export async function GET(req: NextRequest) {
     parseInt(req.nextUrl.searchParams.get("page") || "1"),
     1,
   );
+  const yearsOfExperience = Math.max(
+    parseInt(req.nextUrl.searchParams.get("yoe") || "0"),
+  );
   const searchQuery = searchTerm
     .trim()
+    .replace(/[-_.!/)(&]/gi, " ")
     .split(" ")
     .filter((word) => word.length > 0)
     .map((word) => word + ":*")
@@ -53,9 +57,12 @@ export async function GET(req: NextRequest) {
     })
     .from(advocates)
     .where(
-      searchQuery
-        ? sql`${advocates.searchVector} @@ to_tsquery('english', ${searchQuery})`
-        : sql`true`,
+      and(
+        searchQuery
+          ? sql`${advocates.searchVector} @@ to_tsquery('english', ${searchQuery})`
+          : sql`true`,
+        gte(advocates.yearsOfExperience, yearsOfExperience),
+      ),
     )
     .offset((pageNumber - 1) * pageSize)
     .limit(pageSize)

@@ -30,6 +30,7 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
   });
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [pageNumber, setPageNumber] = useState(initialPageNumber);
+  const [yearsOfExperince, setYearsOfExperience] = useState(0);
 
   useEffect(
     function () {
@@ -50,7 +51,7 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
     async function () {
       setLoading(true);
       const { response, error: err } = await fetch(
-        `/api/advocates?search=${encodeURIComponent(query)}&size=${pageSize}&page=${pageNumber}`,
+        `/api/advocates?search=${encodeURIComponent(query)}&size=${pageSize}&page=${pageNumber}&yoe=${yearsOfExperince}`,
       )
         .then((res) => ({ response: res, error: undefined }) as const)
         .catch(
@@ -98,7 +99,7 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
       setLoading(false);
       setError(null);
     },
-    [query, pageSize, pageNumber],
+    [query, pageSize, pageNumber, yearsOfExperince],
   );
 
   useEffect(
@@ -114,8 +115,10 @@ export function useAdvocateSearch(inputs?: UseAdvocateSearchInputs) {
     error,
     searchTerm,
     pageInfo,
+    yearsOfExperince,
     search: setSearchTerm,
     setPageSize,
     setPageNumber,
+    setYearsOfExperience,
   };
 }
